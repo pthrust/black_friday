@@ -10,6 +10,7 @@
 
 ---
 
-# Задания с 7 пл 10
+# Задания с 7 по 10
 
-...
+Решения заданий описаны в файле [TASKS7-10.md](https://github.com/pthrust/black_friday/blob/black_friday/TASKS7-10.md)
+
