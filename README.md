@@ -6,8 +6,10 @@
 
 ## Запуск проекта для проверки заданий 2, 3 и 4
 
-Описан в директории sharding-repl-cache в файле [README.md](https://github.com/pthrust/black_friday/blob/black_friday/sharding-repl-cache/README.md)
+Запуск описан в директории sharding-repl-cache в файле [README.md](https://github.com/pthrust/black_friday/blob/black_friday/sharding-repl-cache/README.md)
 
 ---
 
 # Задания с 7 пл 10
+
+...
