@@ -2,7 +2,7 @@
 
 ## Финальная схема
 
-<img src="/black_friday/blob/black_friday/schema/Task6.png" alt="Final schema" width="100%"/>
+<img src="/schema/Task6.png" alt="Final schema" width="100%"/>
 
 ## Запуск проекта для проверки заданий 2, 3 и 4
 
