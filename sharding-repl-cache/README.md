@@ -15,9 +15,10 @@ docker compose up -d
 ```
 
 Последним шагом проверяется использование кэша и результат выглядит примерно вот так:
-Checking redis timing:
-First load page. Time: 1.041666s
-Second load page. Time 0.002739s
+
+Checking redis timing:  
+First load page. Time: 1.041666s  
+Second load page. Time 0.002739s  
 
 ## Как проверить
 
