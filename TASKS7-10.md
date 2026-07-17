@@ -213,23 +213,90 @@ db.carts.createIndex({ expires_at: 1 }, { expireAfterSeconds: 0 })
 
 ```javascript
 
-// Создание корзины для гостя	javascript<br>const sessionId = "session_abc123";<br>db.carts.insertOne({<br> shard_key: sessionId,<br> user_id: null,<br> session_id: sessionId,<br> items: [],<br> status: "active",<br> created_at: new Date(),<br> updated_at: new Date(),<br> expires_at: new Date(Date.now() + 7*24*60*60*1000)<br>})<br>	Хеш shard_key определяет шард. Все операции с этой корзиной идут на тот же шард.
+// Создание корзины для гостя
+const sessionId = "session_abc123";
+db.carts.insertOne(
+  shard_key: sessionId,
+  user_id: null,
+  session_id: sessionId,
+  items: [],
+  status: "active",
+  created_at: new Date(),
+  updated_at: new Date(),
+  expires_at: new Date(Date.now() + 7*24*60*60*1000)
+})
 
-// Создание корзины для авторизованного пользователя	javascript<br>const userId = "user_12345";<br>db.carts.insertOne({<br> shard_key: userId,<br> user_id: userId,<br> session_id: null,<br> items: [],<br> status: "active",<br> created_at: new Date(),<br> updated_at: new Date(),<br> expires_at: new Date(Date.now() + 7*24*60*60*1000)<br>})<br>	Аналогично – точечная вставка.
+// Создание корзины для авторизованного пользователя
+const userId = "user_12345";
+db.carts.insertOne({
+  shard_key: userId,
+  user_id: userId,
+  session_id: null,
+  items: [],
+  status: "active",
+  created_at: new Date(),
+  updated_at: new Date(),
+  expires_at: new Date(Date.now() + 7*24*60*60*1000)
+})
 
-// Получение текущей корзины по session_id	javascript<br>const sessionId = "session_abc123";<br>db.carts.findOne({<br> shard_key: sessionId,<br> session_id: sessionId,<br> status: "active"<br>})<br>	Точечный запрос (шард-ключ = sessionId). Индекс { session_id: 1, status: 1 } ускоряет фильтрацию.
+// Получение текущей корзины по session_id
+const sessionId = "session_abc123";
+db.carts.findOne({
+  shard_key: sessionId,
+  session_id: sessionId,
+  status: "active"
+})
 
-// Получение текущей корзины по user_id	javascript<br>const userId = "user_12345";<br>db.carts.findOne({<br> shard_key: userId,<br> user_id: userId,<br> status: "active"<br>})<br>	Точечный запрос (шард-ключ = userId). Индекс { user_id: 1, status: 1 } ускоряет фильтрацию.
+// Получение текущей корзины по user_id
+const userId = "user_12345";
+db.carts.findOne({
+  shard_key: userId,
+  user_id: userId,
+  status: "active"
+})
 
-// Добавление товара в корзину	javascript<br>// Для авторизованного<br>db.carts.updateOne(<br> { shard_key: userId, user_id: userId, status: "active" },<br> { $push: { items: { product_id: ObjectId("..."), quantity: 1 } },<br> $set: { updated_at: new Date() } }<br>)<br>	Точечный апдейт, использует шард-ключ и индекс.
+// Добавление товара в корзину для авторизованного
+db.carts.updateOne(
+  { shard_key: userId, user_id: userId, status: "active" },
+  { $push: { items: { product_id: ObjectId("..."), quantity: 1 } },
+  $set: { updated_at: new Date() } }
+)
 
-// Удаление товара из корзины	javascript<br>db.carts.updateOne(<br> { shard_key: sessionId, session_id: sessionId, status: "active" },<br> { $pull: { items: { product_id: ObjectId("...") } },<br> $set: { updated_at: new Date() } }<br>)<br>	Точечный апдейт.
+// Удаление товара из корзины
+db.carts.updateOne(
+  { shard_key: sessionId, session_id: sessionId, status: "active" },
+  { $pull: { items: { product_id: ObjectId("...") } },
+  $set: { updated_at: new Date() } }
+)
 
-// Слияние гостевой корзины в пользовательскую (после логина)	javascript<br>const guestSession = "session_abc123";<br>const userId = "user_12345";<br>// 1. Найти гостевую корзину<br>const guestCart = db.carts.findOne({<br> shard_key: guestSession,<br> session_id: guestSession,<br> status: "active"<br>});<br>if (guestCart) {<br> // 2. Обновить пользовательскую корзину (добавить товары)<br> db.carts.updateOne(<br> { shard_key: userId, user_id: userId, status: "active" },<br> { $push: { items: { $each: guestCart.items } },<br> $set: { updated_at: new Date() } }<br> );<br> // 3. Отметить гостевую как abandoned<br> db.carts.updateOne(<br> { shard_key: guestSession, session_id: guestSession },<br> { $set: { status: "abandoned", updated_at: new Date() } }<br> );<br>}<br>	Каждый запрос точечный (по своим шард-ключам). Индексы обеспечивают быстрый поиск.
+// Слияние гостевой корзины в пользовательскую (после логина)
+const guestSession = "session_abc123";
+const userId = "user_12345";
+// 1. Найти гостевую корзину
+const guestCart = db.carts.findOne({
+  shard_key: guestSession,
+  session_id: guestSession,
+  status: "active"
+});
+if (guestCart) {
+// 2. Обновить пользовательскую корзину (добавить товары)
+  db.carts.updateOne(
+    { shard_key: userId, user_id: userId, status: "active" },
+    { $push: { items: { $each: guestCart.items } },
+    $set: { updated_at: new Date() } }
+  );
+// 3. Отметить гостевую как abandoned
+  db.carts.updateOne(
+    { shard_key: guestSession, session_id: guestSession },
+    { $set: { status: "abandoned", updated_at: new Date() } }
+  );
+}
 
-// Отметка корзины как заказанной	javascript<br>db.carts.updateOne(<br> { shard_key: userId, user_id: userId, status: "active" },<br> { $set: { status: "ordered", updated_at: new Date() } }<br>)<br>	Точечный апдейт.
-
-// Автоматическая очистка старых корзин (TTL)	(Настраивается один раз)	Индекс { expires_at: 1 } с expireAfterSeconds – MongoDB автоматически удаляет документы, фоновая задача не влияет на производительность.
+// Отметка корзины как заказанной
+db.carts.updateOne(
+  { shard_key: userId, user_id: userId, status: "active" },
+  { $set: { status: "ordered", updated_at: new Date() } }
+)
 ```
 
 #### Риски и их минимизация
@@ -238,3 +305,15 @@ db.carts.createIndex({ expires_at: 1 }, { expireAfterSeconds: 0 })
 |---|---|
 | Гостевые корзины без user_id могут распределяться неравномерно | Использовать составной ключ с session_id как второй компонент |
 | Слияние гостевой корзины в пользовательскую требует двух запросов | Выполнять операции в транзакции |
+
+## Задание 8. Выявление и устранение «горячих» шардов
+
+## Задание 9. Настройка чтения с реплик и консистентность
+
+## Задание 10. Миграция на Cassandra: модель данных, стратегии репликации и шардирования
+
+### Задание 10.1
+
+### Задание 10.2
+
+### Задание 10.3
