@@ -1,35 +1,25 @@
-# pymongo-api
+# Задания с 1 по 6
 
-## Как запустить
+## Финальная схема
 
-Запускаем mongodb и приложение
+<img src="/schema/Task6.png" alt="Final schema" width="100%"/>
 
-```shell
-docker compose up -d
-```
+## Промежуточные схемы
 
-Заполняем mongodb данными
+[Task1-1.png](https://github.com/pthrust/black_friday/blob/black_friday/schema/Task1-1.png)  
+[Task1-2.png](https://github.com/pthrust/black_friday/blob/black_friday/schema/Task1-2.png)  
+[Task1-3.png](https://github.com/pthrust/black_friday/blob/black_friday/schema/Task1-3.png)  
+[Task5.png](https://github.com/pthrust/black_friday/blob/black_friday/schema/Task5.png)  
+[Task6.png](https://github.com/pthrust/black_friday/blob/black_friday/schema/Task6.png)  
 
-```shell
-./scripts/mongo-init.sh
-```
 
-## Как проверить
+## Запуск проекта для проверки заданий 2, 3 и 4
 
-### Если вы запускаете проект на локальной машине
+Запуск описан в директории sharding-repl-cache в файле [README.md](https://github.com/pthrust/black_friday/blob/black_friday/sharding-repl-cache/README.md)
 
-Откройте в браузере http://localhost:8080
+---
 
-### Если вы запускаете проект на предоставленной виртуальной машине
+# Задания с 7 по 10
 
-Узнать белый ip виртуальной машины
+Решения заданий описаны в файле [TASKS7-10.md](https://github.com/pthrust/black_friday/blob/black_friday/TASKS7-10.md)
 
-```shell
-curl --silent http://ifconfig.me
-```
-
-Откройте в браузере http://<ip виртуальной машины>:8080
-
-## Доступные эндпоинты
-
-Список доступных эндпоинтов, swagger http://<ip виртуальной машины>:8080/docs
